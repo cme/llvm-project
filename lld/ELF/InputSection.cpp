@@ -1119,7 +1119,9 @@ void InputSection::relocateNonAlloc(Ctx &ctx, uint8_t *buf,
       //
       // TODO To reduce disruption, we use 0 instead of -1 as the tombstone
       // value. Enable -1 in a future release.
-      if (!ds || (ds->folded && !isDebugLine)) {
+      // if this is nanoMIPS specific composite relocation, skip it
+      if ((!ds && !prevRelocOnlyCalculating) ||
+          (ds && ds->folded && !isDebugLine)) {
         // If -z dead-reloc-in-nonalloc= is specified, respect it.
         uint64_t value = SignExtend64<bits>(*tombstone);
         // For a 32-bit local TU reference in .debug_names, X86_64::relocate
